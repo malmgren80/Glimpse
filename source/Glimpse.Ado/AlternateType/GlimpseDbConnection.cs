@@ -58,11 +58,9 @@ namespace Glimpse.Ado.AlternateType
                 InnerConnection.StateChange += value;
             }
             remove
-            {
-                if (InnerConnection != null)
-                {
-                    InnerConnection.StateChange -= value;
-                }
+            { 
+                //Testing to see if exception is thrown here
+                InnerConnection.StateChange -= value; 
             }
         }
 
