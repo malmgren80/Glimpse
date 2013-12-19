@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Xml.Serialization;
 using Glimpse.Core.Configuration;
 using Glimpse.Core.Extensibility;
 
@@ -8,12 +9,13 @@ namespace Glimpse.Core.Policy
     /// <summary>
     /// Policy which will set Glimpse's runtime policy to <c>Off</c> if a Http response's status code is not on the white list.
     /// </summary>
-    public class StatusCodePolicy : IRuntimePolicy, IConfigurable
+    public class StatusCodePolicy : IRuntimePolicy, IConfigurable, INeedMyCustomConfiguration
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="StatusCodePolicy" /> class with an empty white list.
         /// </summary>
-        public StatusCodePolicy() : this(new List<int>())
+        public StatusCodePolicy()
+            : this(new List<int>())
         {
         }
 
@@ -30,6 +32,9 @@ namespace Glimpse.Core.Policy
             }
 
             StatusCodeWhiteList = statusCodeWhiteList;
+            StatusCodeWhiteList.Add(200);
+            StatusCodeWhiteList.Add(301);
+            StatusCodeWhiteList.Add(302);
         }
 
         /// <summary>
@@ -99,8 +104,38 @@ namespace Glimpse.Core.Policy
         {
             foreach (StatusCodeElement item in section.RuntimePolicies.StatusCodes)
             {
-                StatusCodeWhiteList.Add(item.StatusCode);
+                AddStatusCode(item.StatusCode);
             }
+        }
+
+        public void ProcessCustomConfiguration(CustomConfigurationProvider customConfigurationProvider)
+        {
+            var statusCodes = customConfigurationProvider.GetMyCustomConfigurationAs<StatusCodePolicyStatusCodes>();
+            foreach (var statusCode in statusCodes.StatusCodes)
+            {
+                AddStatusCode(statusCode.Value);
+            }
+        }
+
+        private void AddStatusCode(int statusCode)
+        {
+            if (!StatusCodeWhiteList.Contains(statusCode))
+            {
+                StatusCodeWhiteList.Add(statusCode);
+            }
+        }
+
+        [XmlRoot(ElementName = "statusCodes")]
+        public class StatusCodePolicyStatusCodes
+        {
+            [XmlElement(ElementName = "add")]
+            public StatusCodePolicyStatusCode[] StatusCodes;
+        }
+
+        public class StatusCodePolicyStatusCode
+        {
+            [XmlAttribute("statusCode")]
+            public int Value { get; set; }
         }
     }
 }

@@ -62,6 +62,7 @@
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Xml" />
     <Reference Include="Tavis.UriTemplates, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Tavis.UriTemplates.0.1.1\lib\NET40\Tavis.UriTemplates.dll</HintPath>
     </Reference>
@@ -80,6 +81,8 @@
     <Compile Include="Configuration\RegexConverter.cs" />
     <Compile Include="Configuration\RegexElement.cs" />
     <Compile Include="Configuration\RegexElementCollection.cs" />
+    <Compile Include="Configuration\SetupElement.cs" />
+    <Compile Include="Configuration\SetupElementCollection.cs" />
     <Compile Include="Configuration\StatusCodeElement.cs" />
     <Compile Include="Configuration\StatusCodeElementCollection.cs" />
     <Compile Include="Configuration\TypeConverter.cs" />
@@ -92,6 +95,7 @@
     <Compile Include="Extensibility\AlternateMethod.cs" />
     <Compile Include="Extensibility\AntiXssEncoder.cs" />
     <Compile Include="Extensibility\CastleInvocationToAlternateMethodContextAdapter.cs" />
+    <Compile Include="Extensibility\CustomConfigurationProvider.cs" />
     <Compile Include="Extensibility\IDependOnResources.cs" />
     <Compile Include="Extensibility\DictionaryDataStoreAdapter.cs" />
     <Compile Include="Extensibility\ExecutionTimer.cs" />
@@ -101,6 +105,7 @@
     <Compile Include="Extensibility\IExecutionTimer.cs" />
     <Compile Include="Extensibility\IKey.cs" />
     <Compile Include="Extensibility\ILayoutControl.cs" />
+    <Compile Include="Extensibility\INeedMyCustomConfiguration.cs" />
     <Compile Include="Extensibility\IParameterValueProvider.cs" />
     <Compile Include="Extensibility\IPrivilegedResource.cs" />
     <Compile Include="Extensibility\ITabLayout.cs" />

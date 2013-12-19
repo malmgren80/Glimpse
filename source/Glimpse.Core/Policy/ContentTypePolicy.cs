@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Serialization;
 using Glimpse.Core.Configuration;
 using Glimpse.Core.Extensibility;
 
@@ -9,12 +10,13 @@ namespace Glimpse.Core.Policy
     /// <summary>
     /// Policy which will set Glimpse's runtime policy to <c>Off</c> if a Http response's content type is not on the white list.
     /// </summary>
-    public class ContentTypePolicy : IRuntimePolicy, IConfigurable
+    public class ContentTypePolicy : IRuntimePolicy, IConfigurable, INeedMyCustomConfiguration
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ContentTypePolicy" /> class with an empty white list.
         /// </summary>
-        public ContentTypePolicy() : this(new List<string>())
+        public ContentTypePolicy()
+            : this(new List<string>())
         {
         }
 
@@ -31,6 +33,9 @@ namespace Glimpse.Core.Policy
             }
 
             ContentTypeWhiteList = contentTypeWhiteList;
+            ContentTypeWhiteList.Add("text/html");
+            ContentTypeWhiteList.Add("application/json");
+            ContentTypeWhiteList.Add("text/plain");
         }
 
         /// <summary>
@@ -65,7 +70,7 @@ namespace Glimpse.Core.Policy
             try
             {
                 var contentType = policyContext.RequestMetadata.ResponseContentType.ToLowerInvariant();
-                
+
                 // support for the following content type strings: "text/html" & "text/html; charset=utf-8"
                 return ContentTypeWhiteList.Any(ct => contentType.Contains(ct.ToLowerInvariant())) ? RuntimePolicy.On : RuntimePolicy.Off;
             }
@@ -103,8 +108,38 @@ namespace Glimpse.Core.Policy
         {
             foreach (ContentTypeElement item in section.RuntimePolicies.ContentTypes)
             {
-                ContentTypeWhiteList.Add(item.ContentType);
+                AddContentType(item.ContentType);
             }
+        }
+
+        public void ProcessCustomConfiguration(CustomConfigurationProvider customConfigurationProvider)
+        {
+            var contentTypes = customConfigurationProvider.GetMyCustomConfigurationAs<ContentTypePolicyContentTypes>();
+            foreach (var contentType in contentTypes.ContentTypes)
+            {
+                AddContentType(contentType.Value);
+            }
+        }
+
+        private void AddContentType(string contentType)
+        {
+            if (!ContentTypeWhiteList.Contains(contentType))
+            {
+                ContentTypeWhiteList.Add(contentType);
+            }
+        }
+
+        [XmlRoot(ElementName = "contentTypes")]
+        public class ContentTypePolicyContentTypes
+        {
+            [XmlElement(ElementName = "add")]
+            public ContentTypePolicyContentType[] ContentTypes;
+        }
+
+        public class ContentTypePolicyContentType
+        {
+            [XmlAttribute("contentType")]
+            public string Value { get; set; }
         }
     }
 }

@@ -144,13 +144,7 @@ namespace Glimpse.Core.Framework
         /// </returns>
         public ICollection<IClientScript> InstantiateClientScripts()
         {
-            ICollection<IClientScript> result;
-            if (TryAllInstancesFromServiceLocators(out result))
-            {
-                return result;
-            }
-
-            return CreateDiscoverableCollection<IClientScript>(Configuration.ClientScripts);
+            return InstantiateDiscoverableCollection<IClientScript>(Configuration.ClientScripts);
         }
 
         /// <summary>
@@ -258,13 +252,7 @@ namespace Glimpse.Core.Framework
         /// </returns>
         public ICollection<IInspector> InstantiateInspectors()
         {
-            ICollection<IInspector> result;
-            if (TryAllInstancesFromServiceLocators(out result))
-            {
-                return result;
-            }
-
-            return CreateDiscoverableCollection<IInspector>(Configuration.Inspectors);
+            return InstantiateDiscoverableCollection<IInspector>(Configuration.Inspectors);
         }
 
         /// <summary>
@@ -275,13 +263,7 @@ namespace Glimpse.Core.Framework
         /// </returns>
         public ICollection<IResource> InstantiateResources()
         {
-            ICollection<IResource> resources;
-            if (TryAllInstancesFromServiceLocators(out resources))
-            {
-                return resources;
-            }
-
-            return CreateDiscoverableCollection<IResource>(Configuration.Resources);
+            return InstantiateDiscoverableCollection<IResource>(Configuration.Resources);
         }
 
         /// <summary>
@@ -310,24 +292,12 @@ namespace Glimpse.Core.Framework
         /// </returns>
         public ICollection<ITab> InstantiateTabs()
         {
-            ICollection<ITab> tabs;
-            if (TryAllInstancesFromServiceLocators(out tabs))
-            {
-                return tabs;
-            }
-
-            return CreateDiscoverableCollection<ITab>(Configuration.Tabs);
+            return InstantiateDiscoverableCollection<ITab>(Configuration.Tabs);
         }
 
         public ICollection<IDisplay> InstantiateDisplays()
         {
-            ICollection<IDisplay> displays;
-            if (TryAllInstancesFromServiceLocators(out displays))
-            {
-                return displays;
-            }
-
-            return CreateDiscoverableCollection<IDisplay>(Configuration.Displays);
+            return InstantiateDiscoverableCollection<IDisplay>(Configuration.Displays);
         }
 
         /// <summary>
@@ -338,20 +308,7 @@ namespace Glimpse.Core.Framework
         /// </returns>
         public ICollection<IRuntimePolicy> InstantiateRuntimePolicies()
         {
-            ICollection<IRuntimePolicy> result;
-            if (TryAllInstancesFromServiceLocators(out result))
-            {
-                return result;
-            }
-
-            var collection = CreateDiscoverableCollection<IRuntimePolicy>(Configuration.RuntimePolicies);
-
-            foreach (var config in collection.OfType<IConfigurable>())
-            {
-                config.Configure(Configuration);
-            }
-
-            return collection;
+            return InstantiateDiscoverableCollection<IRuntimePolicy>(Configuration.RuntimePolicies);
         }
 
         /// <summary>
@@ -362,13 +319,7 @@ namespace Glimpse.Core.Framework
         /// </returns>
         public ICollection<ISerializationConverter> InstantiateSerializationConverters()
         {
-            ICollection<ISerializationConverter> result;
-            if (TryAllInstancesFromServiceLocators(out result))
-            {
-                return result;
-            }
-
-            return CreateDiscoverableCollection<ISerializationConverter>(Configuration.SerializationConverters);
+            return InstantiateDiscoverableCollection<ISerializationConverter>(Configuration.SerializationConverters);
         }
 
         /// <summary>
@@ -522,6 +473,34 @@ namespace Glimpse.Core.Framework
             if (discoverableCollection.AutoDiscover)
             {
                 discoverableCollection.Discover();
+            }
+
+            return discoverableCollection;
+        }
+
+        private ICollection<TElementType> InstantiateDiscoverableCollection<TElementType>(DiscoverableCollectionElement configuredDiscoverableCollection)
+            where TElementType : class
+        {
+            ICollection<TElementType> collection;
+            if (TryAllInstancesFromServiceLocators(out collection))
+            {
+                return collection;
+            }
+
+            var discoverableCollection = CreateDiscoverableCollection<TElementType>(configuredDiscoverableCollection);
+
+            foreach (var configurable in discoverableCollection.OfType<IConfigurable>())
+            {
+                configurable.Configure(Configuration);
+            }
+
+            foreach (var customerConfigurationRequester in discoverableCollection.OfType<INeedMyCustomConfiguration>())
+            {
+                string customConfiguration = configuredDiscoverableCollection.Setup.GetSetupFor(customerConfigurationRequester.GetType());
+                if(!string.IsNullOrEmpty(customConfiguration))
+                {
+                    customerConfigurationRequester.ProcessCustomConfiguration(new CustomConfigurationProvider(customConfiguration));
+                }
             }
 
             return discoverableCollection;

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Xml.Serialization;
 using Glimpse.Core.Configuration;
 using Glimpse.Core.Extensibility;
 
@@ -15,7 +16,8 @@ namespace Glimpse.Core.Policy
         /// <summary>
         /// Initializes a new instance of the <see cref="UriPolicy" /> class with an empty black list.
         /// </summary>
-        public UriPolicy() : this(new List<Regex>())
+        public UriPolicy()
+            : this(new List<Regex>())
         {
         }
 
@@ -32,6 +34,7 @@ namespace Glimpse.Core.Policy
             }
 
             UriBlackList = uriBlackList;
+            UriBlackList.Add(new Regex("__browserLink/requestData"));
         }
 
         /// <summary>
@@ -110,11 +113,41 @@ namespace Glimpse.Core.Policy
         /// </example>
         public void Configure(Section section)
         {
-            UriBlackList.Add(new Regex("__browserLink/requestData")); 
             foreach (RegexElement item in section.RuntimePolicies.Uris)
             {
-                UriBlackList.Add(item.Regex);
+                AddUriRegex(item.Regex);
             }
+        }
+
+        public void ProcessCustomConfiguration(CustomConfigurationProvider customConfigurationProvider)
+        {
+            var uris = customConfigurationProvider.GetMyCustomConfigurationAs<UriPolicyUris>();
+            foreach (var uri in uris.Uris)
+            {
+                AddUriRegex(new Regex(uri.RegexPattern));
+            }
+        }
+
+        private void AddUriRegex(Regex uriRegex)
+        {
+            string uriRegexPattern = uriRegex.ToString();
+            if (UriBlackList.All(regex => regex.ToString() != uriRegexPattern))
+            {
+                UriBlackList.Add(uriRegex);
+            }
+        }
+
+        [XmlRoot(ElementName = "uris")]
+        public class UriPolicyUris
+        {
+            [XmlElement(ElementName = "add")]
+            public UriPolicyUri[] Uris;
+        }
+
+        public class UriPolicyUri
+        {
+            [XmlAttribute("regex")]
+            public string RegexPattern { get; set; }
         }
     }
 }

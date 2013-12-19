@@ -48,5 +48,12 @@ namespace Glimpse.Core.Configuration
             get { return (TypeElementCollection)base["ignoredTypes"]; }
             set { base["ignoredTypes"] = value; }
         }
+
+        [ConfigurationProperty("setup")]
+        public SetupElementCollection Setup
+        {
+            get { return (SetupElementCollection)base["setup"]; }
+            set { base["setup"] = value; }
+        }
     }
 }
