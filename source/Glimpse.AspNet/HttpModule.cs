@@ -11,7 +11,7 @@ namespace Glimpse.AspNet
     public class HttpModule : IHttpModule  
     {
         private static readonly object LockObj = new object();
-        private static GlimpseConfiguration Configuration;
+        private static Configuration Configuration;
 
         static HttpModule()
         {
@@ -70,7 +70,7 @@ namespace Glimpse.AspNet
             if (!GlimpseRuntime.IsInitialized)
             {
                 Configuration = Configuration ?? 
-                    new GlimpseConfiguration(
+                    new Configuration(
                         new HttpHandlerEndpointConfiguration(), 
                         new InMemoryPersistenceStore(
                             new HttpApplicationStateBaseDataStoreAdapter(httpApplication.Application)));

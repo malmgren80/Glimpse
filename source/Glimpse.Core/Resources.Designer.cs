@@ -331,7 +331,7 @@ namespace Glimpse.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid privileged resource execution on &apos;{0}&apos;. Call overload Execute(IResourceContext, IGlimpseConfiguration) instead..
+        ///   Looks up a localized string similar to Invalid privileged resource execution on &apos;{0}&apos;. Call overload Execute(IResourceContext, IConfiguration) instead..
         /// </summary>
         internal static string PrivilegedResourceExecuteNotSupported {
             get {

@@ -828,7 +828,7 @@ namespace Glimpse.Test.Core.Framework
         }
 
         [Theory(Skip = "This test is hanging the test runner. Fix later"), AutoMock]
-        public void InitializeSetsInstanceWhenExecuted(IGlimpseConfiguration configuration)
+        public void InitializeSetsInstanceWhenExecuted(IConfiguration configuration)
         {
             GlimpseRuntime.Initialize(configuration);
 

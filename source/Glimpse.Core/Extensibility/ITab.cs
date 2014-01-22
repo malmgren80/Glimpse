@@ -23,8 +23,8 @@ namespace Glimpse.Core.Extensibility
     /// </para>
     /// <para>
     /// Alternatively, if you after simplicity and return an object which represents  
-    /// the Glimpse protocol, you can use <see cref="Glimpse.Core.Tab.Assist.TabObject"/>
-    /// and <see cref="Glimpse.Core.Tab.Assist.TabSection"/> as helpers.
+    /// the Glimpse protocol, you can use <see cref="GlimpseTimeline.Core.Tab.Assist.TabObject"/>
+    /// and <see cref="GlimpseTimeline.Core.Tab.Assist.TabSection"/> as helpers.
     /// </para>
     /// <para>
     /// Additional functionality can be injected into via additionally implementing 

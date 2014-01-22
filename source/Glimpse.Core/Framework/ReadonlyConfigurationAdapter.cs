@@ -6,9 +6,9 @@ namespace Glimpse.Core.Framework
 {
     public class ReadonlyConfigurationAdapter : IReadonlyGlimpseConfiguration
     {
-        private readonly IGlimpseConfiguration configuration;
+        private readonly IConfiguration configuration;
 
-        public ReadonlyConfigurationAdapter(IGlimpseConfiguration configuration)
+        public ReadonlyConfigurationAdapter(IConfiguration configuration)
         {
             this.configuration = configuration;
         }

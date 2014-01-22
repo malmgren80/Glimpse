@@ -31,8 +31,8 @@ namespace Glimpse.Core.Framework
         /// <remarks>
         /// Specifically, with the ASP.NET provider, this is wired to the 
         /// <c>ProcessRequest</c> method.
-        /// <seealso cref="Glimpse.Core.Extensibility.IResourceResult"/>
-        /// <seealso cref="Glimpse.Core.Extensibility.IResource"/>
+        /// <seealso cref="GlimpseTimeline.Core.Extensibility.IResourceResult"/>
+        /// <seealso cref="GlimpseTimeline.Core.Extensibility.IResource"/>
         /// </remarks>
         void ExecuteDefaultResource(IRequestResponseAdapter requestResponseAdapter);
 
@@ -44,8 +44,8 @@ namespace Glimpse.Core.Framework
         /// <remarks>
         /// Specifically, with the ASP.NET provider, this is wired to the 
         /// <c>ProcessRequest</c> method.
-        /// <seealso cref="Glimpse.Core.Extensibility.IResourceResult"/>
-        /// <seealso cref="Glimpse.Core.Extensibility.IResource"/>
+        /// <seealso cref="GlimpseTimeline.Core.Extensibility.IResourceResult"/>
+        /// <seealso cref="GlimpseTimeline.Core.Extensibility.IResource"/>
         /// </remarks>
         void ExecuteResource(IRequestResponseAdapter requestResponseAdapter, string resourceName, ResourceParameters parameters);
 

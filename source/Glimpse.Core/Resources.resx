@@ -245,7 +245,7 @@
     <comment>{0} - Assembly.FullName</comment>
   </data>
   <data name="PrivilegedResourceExecuteNotSupported" xml:space="preserve">
-    <value>Invalid privileged resource execution on '{0}'. Call overload Execute(IResourceContext, IGlimpseConfiguration) instead.</value>
+    <value>Invalid privileged resource execution on '{0}'. Call overload Execute(IResourceContext, IConfiguration) instead.</value>
     <comment>{0} - GetType() of offending resource</comment>
   </data>
 </root>

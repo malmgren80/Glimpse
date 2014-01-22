@@ -8,7 +8,7 @@ namespace Glimpse.Core
     internal static class Constants
     {
         /// <summary>
-        /// The key Glimpse server uses to store an <c>IDictionary&lt;string, IDataStore&gt;</c> which provides each <see cref="Glimpse.Core.Extensibility.ITab"/> implementation a thread safe storage mechanism.
+        /// The key Glimpse server uses to store an <c>IDictionary&lt;string, IDataStore&gt;</c> which provides each <see cref="GlimpseTimeline.Core.Extensibility.ITab"/> implementation a thread safe storage mechanism.
         /// </summary>
         /// <remarks>
         /// Used as the key for the framework provider's local request storage mechanism (i.e. <c>HttpContext.Items</c>).
@@ -29,7 +29,7 @@ namespace Glimpse.Core
         internal const string GlobalStopwatchKey = "__GlimpseGlobalStopwatch";
 
         /// <summary>
-        /// The key Glimpse server uses to store a <see cref="Glimpse.Core.Extensibility.IExecutionTimer"/> for tracking execution duration.
+        /// The key Glimpse server uses to store a <see cref="GlimpseTimeline.Core.Extensibility.IExecutionTimer"/> for tracking execution duration.
         /// </summary>
         /// <remarks>
         /// Used as the key for the framework provider's local request storage mechanism (i.e. <c>HttpContext.Items</c>).
@@ -69,7 +69,7 @@ namespace Glimpse.Core
         internal const string RuntimePolicyKey = "__GlimpseRequestRuntimePermissions";
 
         /// <summary>
-        /// The key Glimpse server uses to store an <c>IDictionary&lt;string, TabResult&gt;</c> which stores the result of calling <c>GetData()</c> on each <see cref="Glimpse.Core.Extensibility.ITab"/> implementation.
+        /// The key Glimpse server uses to store an <c>IDictionary&lt;string, TabResult&gt;</c> which stores the result of calling <c>GetData()</c> on each <see cref="GlimpseTimeline.Core.Extensibility.ITab"/> implementation.
         /// </summary>
         /// <remarks>
         /// Used as the key for the framework provider's local request storage mechanism (i.e. <c>HttpContext.Items</c>).

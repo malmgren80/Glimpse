@@ -9,7 +9,7 @@
         /// Gets the name of the <see cref="IResource"/> to dynamically generate a Uri for. 
         /// </summary>
         /// <remarks>
-        /// <see cref="IResource"/> Uri generation is handled by implementations of <see cref="Glimpse.Core.Framework.ResourceEndpointConfiguration"/>.
+        /// <see cref="IResource"/> Uri generation is handled by implementations of <see cref="GlimpseTimeline.Core.Framework.ResourceEndpointConfiguration"/>.
         /// </remarks>
         /// <returns>Name of the <see cref="IResource"/> to link to.</returns>
         string GetResourceName();

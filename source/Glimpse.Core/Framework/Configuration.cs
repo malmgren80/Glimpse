@@ -19,7 +19,7 @@ namespace Glimpse.Core.Framework
     /// <summary>
     /// Contains all configuration required by <see cref="IGlimpseRuntime"/> instances to execute.
     /// </summary>
-    public class GlimpseConfiguration : IGlimpseConfiguration
+    public class Configuration : IConfiguration
     {
         private IMessageBroker messageBroker;
         private Func<IExecutionTimer> timerStrategy;
@@ -44,17 +44,17 @@ namespace Glimpse.Core.Framework
         private RuntimePolicy? defaultRuntimePolicy;
         private ICollection<ISerializationConverter> serializationConverters;
 
-        public GlimpseConfiguration(ResourceEndpointConfiguration endpointConfiguration, IPersistenceStore persistenceStore)
+        public Configuration(ResourceEndpointConfiguration endpointConfiguration, IPersistenceStore persistenceStore)
             : this(endpointConfiguration, persistenceStore, "glimpse")
         {
         }
 
-        public GlimpseConfiguration(ResourceEndpointConfiguration endpointConfiguration, IPersistenceStore persistenceStore, string xmlConfigurationSectionName)
+        public Configuration(ResourceEndpointConfiguration endpointConfiguration, IPersistenceStore persistenceStore, string xmlConfigurationSectionName)
             : this(endpointConfiguration, persistenceStore, ConfigurationManager.GetSection(xmlConfigurationSectionName) as Section)
         {
         }
 
-        public GlimpseConfiguration(ResourceEndpointConfiguration endpointConfiguration, IPersistenceStore persistenceStore, Section xmlConfigurationSection)
+        public Configuration(ResourceEndpointConfiguration endpointConfiguration, IPersistenceStore persistenceStore, Section xmlConfigurationSection)
         {
             if (endpointConfiguration == null)
             {

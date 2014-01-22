@@ -75,7 +75,7 @@ namespace Glimpse.Core.Framework
         /// </summary>
         /// <param name="configuration">The configuration.</param>
         /// <exception cref="System.ArgumentNullException">Throws an exception if <paramref name="configuration"/> is <c>null</c>.</exception>
-        public static void Initialize(IGlimpseConfiguration configuration)
+        public static void Initialize(IConfiguration configuration)
         {
             if (configuration == null)
             {
@@ -99,7 +99,7 @@ namespace Glimpse.Core.Framework
             }
         }
 
-        internal GlimpseRuntime(IGlimpseConfiguration configuration) // V2Merge: This should be private but is internal to not break unit tests
+        internal GlimpseRuntime(IConfiguration configuration) // V2Merge: This should be private but is internal to not break unit tests
         {
             if (configuration == null)
             {
@@ -107,7 +107,7 @@ namespace Glimpse.Core.Framework
             }
 
             // run user customizations to configuration before storing
-            var userUpdatedConfig = Glimpse.Configuration(configuration);
+            var userUpdatedConfig = GlimpseConfiguration.Override(configuration);
             userUpdatedConfig.ApplyOverrides(); // override (some) changes made by the user to make sure .config file driven settings win
             Configuration = new ReadonlyConfigurationAdapter(userUpdatedConfig);
             this.Initialize();
@@ -169,7 +169,7 @@ namespace Glimpse.Core.Framework
         /// <summary>
         /// Begins Glimpse's processing of a Http request.
         /// </summary>
-        /// <exception cref="Glimpse.Core.Framework.GlimpseException">Throws an exception if <see cref="GlimpseRuntime"/> is not yet initialized.</exception>
+        /// <exception cref="TGlimpseTimelineCore.Framework.GlimpseException">Throws an exception if <see cref="GlimpseRuntime"/> is not yet initialized.</exception>
         public Guid BeginRequest(IRequestResponseAdapter requestResponseAdapter)
         {
             if (!IsInitialized)
@@ -212,7 +212,7 @@ namespace Glimpse.Core.Framework
         /// <summary>
         /// Ends Glimpse's processing a Http request.
         /// </summary>
-        /// <exception cref="Glimpse.Core.Framework.GlimpseException">Throws an exception if <c>BeginRequest</c> has not yet been called on a given request.</exception>
+        /// <exception cref="TGlimpseTimelineCore.Framework.GlimpseException">Throws an exception if <c>BeginRequest</c> has not yet been called on a given request.</exception>
         public void EndRequest(IRequestResponseAdapter requestResponseAdapter) // TODO: Add PRG support
         {
             if (HasOffRuntimePolicy(RuntimeEvent.EndRequest, requestResponseAdapter))
