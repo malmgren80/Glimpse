@@ -22,7 +22,7 @@ namespace Glimpse.Ado.Model
             AggregateConnectionStart();
             AggregateConnectionClosed();
             AggregateCommandErrors();
-            AggregateCommandInfos();
+            AggregateCommandStackTraces();
             AggregateCommandDurations();
             AggregateCommandExecuted();
             AggregateCommandRowCounts();
@@ -107,7 +107,7 @@ namespace Glimpse.Ado.Model
             }
         }
 
-        private void AggregateCommandInfos()
+        private void AggregateCommandStackTraces()
         {
             var messages = Messages.OfType<CommandStackTraceMessage>();
             foreach (var message in messages)
