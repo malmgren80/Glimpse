@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Common; 
+using System.Data.Common;
+using System.Diagnostics;
 using System.Reflection;
 using System.Text;
 using Glimpse.Ado.Message;
@@ -148,9 +149,27 @@ namespace Glimpse.Ado.AlternateType
             {
                 command.MessageBroker.Publish(
                     new CommandErrorMessage(command.InnerConnection.ConnectionId, commandId, exception)
+                        .AsTimedMessage(command.TimerStrategy.Stop(timer)) 
+                        .AsTimelineMessage("Command: Error", AdoTimelineCategory.Command, type));
+            }
+        }
+
+        public static void LogCommandStackTrace(this GlimpseDbCommand command, Guid commandId, TimeSpan timer, StackTrace stackTrace, string type)
+        {
+            command.LogCommandStackTrace(commandId, timer, stackTrace, type, false);
+        }
+
+        public static void LogCommandStackTrace(this GlimpseDbCommand command, Guid commandId, TimeSpan timer, StackTrace stackTrace, string type, bool isAsync)
+        {
+            if (command.MessageBroker != null && command.TimerStrategy != null)
+            {
+                command.MessageBroker.Publish(
+                    new CommandStackTraceMessage(command.InnerConnection.ConnectionId, commandId, stackTrace)
                     .AsTimedMessage(command.TimerStrategy.Stop(timer))
-                    .AsTimelineMessage("Command: Error", AdoTimelineCategory.Command, type));
+                    .AsTimelineMessage("Command: Stack", AdoTimelineCategory.Command, type));
             }
         }
     }
+
+  
 }
