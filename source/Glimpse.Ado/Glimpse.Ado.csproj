@@ -52,7 +52,7 @@
     <Compile Include="Inspector\Core\AdoExecutionBlock.cs" />
     <Compile Include="Inspector\Core\DbProviderFactoriesExecutionTask.cs" />
     <Compile Include="Message\AdoCommandMessage.cs" />
-    <Compile Include="Message\AdoCommandMessageBase.cs" />
+    <Compile Include="Message\AdoCommandPayloadMessage.cs" />
     <Compile Include="Message\AdoMessage.cs" />
     <Compile Include="Message\AdoTransactionMessage.cs" />
     <Compile Include="Message\CommandDurationAndRowCountMessage.cs" />

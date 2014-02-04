@@ -3,9 +3,9 @@ using Glimpse.Core.Message;
 
 namespace Glimpse.Ado.Message
 {
-    public abstract class AdoCommandMessageBase<T> : AdoCommandMessage, ITimelineMessage
+    public abstract class AdoCommandPayloadMessage<T> : AdoCommandMessage, ITimelineMessage
     {
-        protected AdoCommandMessageBase(Guid connectionId, Guid commandId, T payload, bool isAsync = false)
+        protected AdoCommandPayloadMessage(Guid connectionId, Guid commandId, T payload, bool isAsync = false)
             : base(connectionId, commandId)
         {
             Payload = payload;
