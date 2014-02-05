@@ -188,13 +188,13 @@ namespace Glimpse.Ado.Tab
             return null;
         }
 
-        private StackFrameFilter _filter;
-        private StackFrameFilter StackFilter
+        private StackTraceFilter _filter;
+        private StackTraceFilter StackFilter
         {
             get { return _filter == null ? (_filter = new ReflectionBlackListStackFrameFilter()) : _filter; }
         }
 
-        public class StackFrameFilter
+        public class StackTraceFilter
         {
             private readonly ISet<string> _excludedTypes = new System.Collections.Generic.HashSet<string>();
             private readonly ISet<string> _excludedMethods = new System.Collections.Generic.HashSet<string>();
@@ -274,7 +274,7 @@ namespace Glimpse.Ado.Tab
             }
         }
 
-        public class ReflectionBlackListStackFrameFilter : StackFrameFilter
+        public class ReflectionBlackListStackFrameFilter : StackTraceFilter
         {
             protected override bool ShouldExcludeMethod(MethodBase method)
             {
