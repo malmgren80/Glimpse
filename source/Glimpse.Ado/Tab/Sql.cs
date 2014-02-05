@@ -6,6 +6,10 @@ using Glimpse.Ado.Tab.Support;
 using Glimpse.Core.Extensibility;
 using Glimpse.Core.Extensions;
 using Glimpse.Core.Tab.Assist;
+using System.Diagnostics;
+using System.Reflection;
+using Glimpse.Core.Framework;
+using System;
 
 namespace Glimpse.Ado.Tab
 {
@@ -153,10 +157,11 @@ namespace Glimpse.Ado.Tab
                     List<object[]> stackTrace = null;
                     if (command.StackTrace != null && command.Exception == null)
                     {
-                        // TODO: Somehow filter out everything but user code.
-                        var stackTraceText = command.StackTrace.ToString(); 
-
-                        stackTrace = new List<object[]> { new object[] { "Stack" }, new object[] { stackTraceText } };
+                        string stackTraceText = StackFilter.GetFilteredStackTrace(command.StackTrace);
+                        if (!string.IsNullOrEmpty(stackTraceText))
+                        {
+                            stackTrace = new List<object[]> { new object[] { "Stack" }, new object[] { stackTraceText } };
+                        }
                     }
 
                     // Commands
@@ -181,6 +186,115 @@ namespace Glimpse.Ado.Tab
             }
 
             return null;
+        }
+
+        private StackFrameFilter _filter;
+        private StackFrameFilter StackFilter
+        {
+            get { return _filter == null ? (_filter = new ReflectionBlackListStackFrameFilter()) : _filter; }
+        }
+
+        public class StackFrameFilter
+        {
+            private readonly ISet<string> _excludedTypes = new System.Collections.Generic.HashSet<string>();
+            private readonly ISet<string> _excludedMethods = new System.Collections.Generic.HashSet<string>();
+            private readonly ISet<string> _excludedAssemblies = new System.Collections.Generic.HashSet<string>();
+
+            public IEnumerable<MethodBase> GetFilteredMethods(StackTrace trace)
+            {
+                if (trace == null)
+                {
+                    yield break;
+                }
+
+                foreach(var frame in trace.GetFrames())
+                {
+                    var method = frame.GetMethod();
+                    
+                    if (ShouldExcludeMethod(method) || 
+                        ShouldExcludeType(method) ||
+                        ShouldExcludeAssembly(method.Module.Assembly))
+                    {
+                        continue;
+                    }
+
+                    yield return method;
+                }
+            }
+
+            public string GetFilteredStackTrace(StackTrace trace)
+            {
+                var methodNames =
+                    (from method in GetFilteredMethods(trace)
+                     select string.Format("{0}.{1}", method.DeclaringType, method.Name));
+
+                return string.Join(Environment.NewLine, methodNames);
+            }
+
+            protected virtual bool ShouldExcludeMethod(MethodBase method)
+            {
+                return _excludedMethods.Contains(method.Name);
+            }
+
+            protected virtual bool ShouldExcludeType(MethodBase method)
+            {
+                var t = method.DeclaringType;
+
+                while (t != null)
+                {
+                    if (_excludedTypes.Contains(t.Name))
+                    { 
+                        return true;
+                    }
+
+                    t = t.DeclaringType;
+                }
+
+                return false;
+            }
+
+            protected virtual bool ShouldExcludeAssembly(Assembly assembly)
+            {
+                return _excludedAssemblies.Contains(assembly.GetName().Name);
+            }
+
+            public void ExcludeType(string type)
+            {
+                _excludedTypes.Add(type);
+            }
+
+            public void ExcludeMethod(string methodName)
+            {
+                _excludedMethods.Add(methodName);
+            }
+
+            public void ExcludeAssembly(string assemblyName)
+            {
+                _excludedAssemblies.Add(assemblyName);
+            }
+        }
+
+        public class ReflectionBlackListStackFrameFilter : StackFrameFilter
+        {
+            protected override bool ShouldExcludeMethod(MethodBase method)
+            {
+                return false;
+            }
+
+            protected override bool ShouldExcludeType(MethodBase method)
+            {
+                return false;
+            }
+
+            protected override bool ShouldExcludeAssembly(Assembly assembly)
+            {
+                if (assembly.GetName().Name.ToUpperInvariant().StartsWith("GLIMPSE"))
+                { 
+                    return true;
+                }
+
+                return ReflectionBlackList.IsBlackListed(assembly);
+            }
         }
     }
 }
