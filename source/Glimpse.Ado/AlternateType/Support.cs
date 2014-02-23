@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Text;
 using Glimpse.Ado.Message;
 using Glimpse.Core.Message;
+using Glimpse.Core.Extensibility;
 
 namespace Glimpse.Ado.AlternateType
 {
@@ -154,6 +155,12 @@ namespace Glimpse.Ado.AlternateType
             }
         }
 
+        private static StackTraceFilter _filter;
+        private static StackTraceFilter StackFilter
+        {
+            get { return _filter == null ? (_filter = new ReflectionBlackListStackFrameFilter()) : _filter; }
+        }
+
         public static void LogCommandStackTrace(this GlimpseDbCommand command, Guid commandId, TimeSpan timer, StackTrace stackTrace, string type)
         {
             command.LogCommandStackTrace(commandId, timer, stackTrace, type, false);
@@ -163,8 +170,10 @@ namespace Glimpse.Ado.AlternateType
         {
             if (command.MessageBroker != null && command.TimerStrategy != null)
             {
+                string stackTraceText = StackFilter.GetFilteredStackTrace(stackTrace);
+
                 command.MessageBroker.Publish(
-                    new CommandStackTraceMessage(command.InnerConnection.ConnectionId, commandId, stackTrace)
+                    new CommandStackTraceMessage(command.InnerConnection.ConnectionId, commandId, stackTraceText)
                     .AsTimedMessage(command.TimerStrategy.Stop(timer))
                     .AsTimelineMessage("Command: Stack", AdoTimelineCategory.Command, type));
             }

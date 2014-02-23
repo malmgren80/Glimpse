@@ -44,7 +44,7 @@ namespace Glimpse.Ado.Model
         /// Gets or sets the stacktrace related to the command.
         /// </summary>
         /// <value>The stacktrace.</value>
-        public StackTrace StackTrace { get; set; }
+        public string StackTraceText { get; set; }
 
         /// <summary>
         /// Gets or sets the time when the command started.

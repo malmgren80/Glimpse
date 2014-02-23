@@ -114,7 +114,7 @@ namespace Glimpse.Ado.Model
             {
                 var command = GetOrCreateCommandFor(message);
                 command.Duration = message.Duration;
-                command.StackTrace = message.Payload;
+                command.StackTraceText = message.Payload;
                 command.StartDateTime = message.StartTime; // Reason we set it again is we now have a better time than the start
                 command.EndDateTime = message.StartTime + message.Offset;
                 command.Offset = message.Offset;
