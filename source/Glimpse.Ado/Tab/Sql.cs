@@ -196,11 +196,11 @@ namespace Glimpse.Ado.Tab
 
         public class StackTraceFilter
         {
-            private readonly ISet<string> _excludedTypes = new System.Collections.Generic.HashSet<string>();
-            private readonly ISet<string> _excludedMethods = new System.Collections.Generic.HashSet<string>();
-            private readonly ISet<string> _excludedAssemblies = new System.Collections.Generic.HashSet<string>();
+            private readonly HashSet<string> _excludedTypes = new System.Collections.Generic.HashSet<string>();
+            private readonly HashSet<string> _excludedMethods = new System.Collections.Generic.HashSet<string>();
+            private readonly HashSet<string> _excludedAssemblies = new System.Collections.Generic.HashSet<string>();
 
-            public IEnumerable<MethodBase> GetFilteredMethods(StackTrace trace)
+            private IEnumerable<StackFrameInfo> GetFilteredMethods(StackTrace trace)
             {
                 if (trace == null)
                 {
@@ -218,7 +218,7 @@ namespace Glimpse.Ado.Tab
                         continue;
                     }
 
-                    yield return method;
+                    yield return new StackFrameInfo(frame, method);
                 }
             }
 
@@ -226,7 +226,7 @@ namespace Glimpse.Ado.Tab
             {
                 var methodNames =
                     (from method in GetFilteredMethods(trace)
-                     select string.Format("{0}.{1}", method.DeclaringType, method.Name));
+                     select method.ToString()).ToArray();
 
                 return string.Join(Environment.NewLine, methodNames);
             }
@@ -271,6 +271,57 @@ namespace Glimpse.Ado.Tab
             public void ExcludeAssembly(string assemblyName)
             {
                 _excludedAssemblies.Add(assemblyName);
+            }
+
+            private class StackFrameInfo
+            {
+                private const string AnonymousMethodDescription = " --- () => {...}";
+
+                private readonly StackFrame _frame;
+                private readonly MethodBase _method;
+
+                public StackFrameInfo(StackFrame frame, MethodBase method)
+                {
+                    _frame = frame;
+                    _method = method;
+                }
+
+                private bool IsAnonymousMethod
+                {
+                    get
+                    {
+                        // Don't know if this will work in all cases...
+                        return _frame.ToString().StartsWith("<") || 
+                            _method.Name.Equals("lambda_method", StringComparison.OrdinalIgnoreCase);
+                    }
+                }
+
+                private string FullMethodName
+                {
+                    get
+                    {
+                        string methodName = string.Format("{0}()", _method.Name);
+                        if (_method.DeclaringType == null)
+                        {
+                            return methodName;
+                        
+                        }
+                        return string.Format("{0}.{1}", _method.DeclaringType.FullName, methodName);
+                    }
+                }
+
+                public override string ToString()
+                {
+                    try
+                    {
+                        return IsAnonymousMethod ? string.Concat(FullMethodName, AnonymousMethodDescription) : FullMethodName;
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.WriteLine(e);
+                        throw e;
+                    }
+                }
             }
         }
 
